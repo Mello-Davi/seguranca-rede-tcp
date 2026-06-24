@@ -139,7 +139,7 @@ cd seguranca-rede-tcp
 Abra um terminal e navegue até a pasta:
 
 ```bash
-cd server
+cd ./server/
 ```
 
 Execute:
@@ -169,7 +169,7 @@ Aguardando conexões...
 Abra um segundo terminal e navegue até a pasta:
 
 ```bash
-cd client
+cd ./client/
 ```
 
 Execute:
