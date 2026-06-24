@@ -53,6 +53,7 @@ O servidor recebe o conteúdo, identifica o modo de transmissão e, quando neces
 - Threading
 - Base64
 - Wireshark
+- radmin VPN
 - Git e GitHub
 
 ---
