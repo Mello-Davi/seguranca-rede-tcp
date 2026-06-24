@@ -276,15 +276,6 @@ docs/screenshots-wireshark/
 
 ---
 
-## Relatório
-
-O relatório completo do projeto encontra-se em:
-
-```text
-docs/relatorio.pdf
-```
-
----
 
 ## Licença
 
