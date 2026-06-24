@@ -1,9 +1,8 @@
 import socket
 import base64
 
-# CONFIGURAÇÃO DO RADMIN VPN:
-# Substitua o IP abaixo pelo IP do Radmin do computador que está rodando o servidor.
-IP_ALVO = '127.0.0.1' 
+# Configurações do Cliente
+IP_ALVO = '127.0.0.1' #IP para testar no próprio dispositivo, tem que mudar para o IP do servidor depois
 PORTA_ALVO = 9999
 
 def iniciar_cliente():
@@ -18,8 +17,8 @@ def iniciar_cliente():
 
     print("=== MENU DE ENVIO ===")
     print("1 - Enviar Mensagem de forma INSEGURA (Texto Claro)")
-    print("2 - Enviar Mensagem de forma OFUSCADA (Simulação - Base64)")
-    print("Digite 'sair' para registrar e encerrar.\n")
+    print("2 - Enviar Mensagem de forma SEGURA (Codificada/Oculta)")
+    print("Digite 'sair' para encerrar.\n")
 
     while True:
         opcao = input("Escolha o modo (1 ou 2): ").strip()
@@ -33,20 +32,16 @@ def iniciar_cliente():
             
         mensagem = input("Digite a mensagem que deseja transmitir: ")
         
-        # Evita problemas de separação de strings no servidor
-        if ":" in mensagem:
-            print("Por razões didáticas do protocolo, não utilize ':' na mensagem.")
-            continue
-        
         if opcao == '1':
+            # Formato Inseguro: Envia o texto exatamente como foi digitado
             pacote = f"INSEGURO:{mensagem}"
             print(f"[Transmitindo] Enviando em texto claro: '{mensagem}'")
             
         elif opcao == '2':
-            # Variável corrigida aqui:
-            mensagem_ofuscada = base64.b64encode(mensagem.encode('utf-8')).decode('utf-8')
-            pacote = f"SEGURO:{mensagem_ofuscada}"
-            print(f"[Transmitindo] O dado trafegando na rede será: '{mensagem_ofuscada}'")
+            # Formato Seguro: Codifica em Base64 antes de jogar na rede
+            mensagem_cripto = base64.b64encode(mensagem.encode('utf-8')).decode('utf-8')
+            pacote = f"SEGURO:{mensagem_cripto}"
+            print(f"[Transmitindo] O dado interceptado na rede será: '{mensagem_cripto}'")
             
         # Envia o pacote estruturado através do Socket TCP
         cliente.send(pacote.encode('utf-8'))

@@ -3,52 +3,47 @@ import threading
 import base64
 from datetime import datetime
 
-IP_SERVIDOR = '0.0.0.0'  
+# Configurações do Servidor
+IP_SERVIDOR = '0.0.0.0'  # Ouve em todas as placas de rede do computador
 PORTA = 9999
 
 def lidar_com_cliente(conexao, endereco):
-    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Cliente conectado! Origem: IP {endereco[0]} na Porta {endereco[1]}")
+    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Clicente conectado com sucesso! Endereço: {endereco}")
     
     while True:
         try:
+            # Recebe o pacote de dados (limite de 1024 bytes)
             dados_recebidos = conexao.recv(1024).decode('utf-8')
             
             if not dados_recebidos:
-                break  
+                break  # Se não houver dados, o cliente desconectou
             
-            # Validação para evitar quebra do servidor caso o pacote venha malformado
-            if ':' not in dados_recebidos:
-                continue
-                
+            # Divide o pacote para entender o formato: "MODO:MENSAGEM"
             modo, mensagem_corpo = dados_recebidos.split(':', 1)
             horario = datetime.now().strftime('%H:%M:%S')
             
             if modo == "INSEGURO":
-                print(f"[{horario}] [TEXTO CLARO] {endereco[0]}:{endereco[1]} enviou: {mensagem_corpo}")
+                print(f"[{horario}] [INSEGURO - TEXTO CLARO] {endereco} enviou: {mensagem_corpo}")
                 resposta = f"Servidor recebeu seu texto claro às {horario}"
                 
             elif modo == "SEGURO":
-                print(f"[{horario}] [OFUSCADO - BASE64] Interceptado na rede como: {mensagem_corpo}")
-                # Decodifica para mostrar o conteúdo original
+                print(f"[{horario}] [SEGURO - CAPTURADO EM BASE64] {endereco} enviou: {mensagem_corpo}")
+                # Decodifica para mostrar o conteúdo original no terminal do servidor
                 texto_original = base64.b64decode(mensagem_corpo.encode('utf-8')).decode('utf-8')
-                print(f"[{horario}] [DECODIFICADO NO SERVIDOR] Conteúdo real: {texto_original}")
-                resposta = f"Servidor decodificou seu dado (Base64) às {horario}"
-            else:
-                resposta = "Modo desconhecido."
+                print(f"[{horario}] [SEGURO - DESCRIPTOGRAFADO NO SERVIDOR] Conteúdo real: {texto_original}")
+                resposta = f"Servidor decodificou seu dado seguro às {horario}"
             
+            # Envia uma resposta de confirmação para o cliente
             conexao.send(resposta.encode('utf-8'))
             
         except Exception as e:
-            print(f"Erro na conexão com {endereco}: {e}")
             break
 
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] Conexão encerrada com {endereco[0]}:{endereco[1]}")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Conexão encerrada com {endereco}")
     conexao.close()
 
 def iniciar_servidor():
     servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # Permite reusar a porta imediatamente após fechar o servidor
-    servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     servidor.bind((IP_SERVIDOR, PORTA))
     servidor.listen()
     print(f"=== SERVIDOR DE SEGURANÇA DE REDE ATIVO ===")
@@ -56,6 +51,7 @@ def iniciar_servidor():
     
     while True:
         conexao, endereco = servidor.accept()
+        # Cria uma thread para cada novo cliente que conectar
         thread = threading.Thread(target=lidar_com_cliente, args=(conexao, endereco))
         thread.start()
 
