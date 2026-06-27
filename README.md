@@ -66,12 +66,6 @@ SEGURANCA-REDE-TCP
 ├── client/
 │   └── client.py
 │
-├── docs/
-│   ├── screenshots-wireshark/
-│   │   └── screenshotteste.txt
-│   │
-│   └── relatorio.pdf
-│
 ├── server/
 │   ├── logs.txt
 │   └── servidor.py
@@ -254,12 +248,6 @@ Durante a captura é possível observar:
 - Estabelecimento da conexão TCP.
 - Troca de mensagens entre cliente e servidor.
 - Encerramento da conexão.
-
-As evidências das capturas podem ser encontradas na pasta:
-
-```text
-docs/screenshots-wireshark/
-```
 
 ---
 
